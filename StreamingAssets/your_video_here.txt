@@ -1,0 +1,1 @@
+Place videos (mp4 container, h264 encoded) in here! Using the StreamingAssets folder structure *is* required to ensure videos are copied correctly to the console.

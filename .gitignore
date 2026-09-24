@@ -1,0 +1,3 @@
+# El .data.gz original pesa 992MB y GitHub lo rechaza (>100MB).
+# NO se sube: el juego usa las 56 partes de Build/data-chunks/ en su lugar.
+Build/SuperHotWebPort.data.gz
