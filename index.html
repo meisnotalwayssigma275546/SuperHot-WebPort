@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>SUPERHOT</title>
+    <link rel="shortcut icon" href="TemplateData/favicon.ico">
+    <link rel="stylesheet" href="TemplateData/style.css">
+    <meta name="description" content="SUPERHOT Unblocked">
+    <meta property="og:image" content="SaveIcon.png" />
+    
+    <!-- Mod API / Custom Scripts -->
+    <script src="GameAPI.js"></script>
+    <script src="js/snow_rider_mod_menu.js"></script> <!-- Rename or replace with superhot mod script if needed -->
+    <script src="TemplateData/UnityProgress.js"></script>
+    
+    <!-- Modern / Updated Unity WebGL Loader -->
+    <script src="Build/SuperHotWebPort.loader.js"></script>
+    
+    <script>
+        // useless shit that may be used for later
+        const nativeInstantiate = WebAssembly.instantiate;
+        WebAssembly.instantiate = async function(bufferSource, importObject) {
+            const result = await nativeInstantiate(bufferSource, importObject);
+            const instance = result.instance || result;
+
+            try {
+                if (typeof window.GameAPI?.Memory?.init === 'function') {
+                    window.GameAPI.Memory.init(instance.exports || window.Module);
+                    console.log("[GameAPI] WebAssembly memory bound successfully.");
+                } else {
+                    console.warn("[GameAPI] Memory.init function not found yet; skipping hook execution.");
+                }
+            } catch (err) {
+                console.error("[GameAPI] Non-fatal hook error:", err);
+            }
+
+            return result;
+        };
+
+        // Initialize Unity WebGL Instance
+        window.addEventListener("load", function () {
+            var canvas = document.querySelector("#unity-canvas");
+            var config = {
+                dataUrl: "Build/SuperHotWebPort.data",
+                frameworkUrl: "Build/SuperHotWebPort.framework.js.gz",
+                codeUrl: "Build/SuperHotWebPort.wasm.gz",
+                streamingAssetsUrl: "StreamingAssets",
+                companyName: "SUPERHOT Team",
+                productName: "SUPERHOT",
+                productVersion: "1.0",
+            };
+
+            createUnityInstance(canvas, config, (progress) => {
+                if (typeof UnityProgress === 'function') {
+                    UnityProgress(progress);
+                }
+            }).then((unityInstance) => {
+                window.gameInstance = unityInstance;
+            }).catch((message) => {
+                alert(message);
+            });
+        });
+    </script>
+</head>
+
+<body style="overflow:hidden; margin:0; padding:0; background-color: #000;">
+    <div class="webgl-content" style="position: absolute; width: 100%; height: 100%;">
+        <canvas id="unity-canvas" style="width: 100%; height: 100%; background: #000; display: block;"></canvas>
+    </div>
+</body>
+
+</html>
